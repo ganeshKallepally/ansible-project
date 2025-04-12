@@ -1,0 +1,58 @@
+---
+- name: Setup LAMP Stack
+  hosts: webservers
+  become: yes
+  tasks:
+    # Task 1: Update system packages
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    # Task 2: Install Apache
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: present
+
+    # Task 3: Start and enable Apache
+    - name: Ensure Apache is running
+      service:
+        name: apache2
+        state: started
+        enabled: true
+
+    # Task 4: Install MySQL
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    # Task 5: Secure MySQL installation (Note: No native Ansible module, use expect or manual method)
+    - name: Display notice for securing MySQL
+      debug:
+        msg: |
+          Use an expect script or SQL commands for securing MySQL.
+          This step is included as a placeholder and should be handled securely.
+
+    # Task 6: Install PHP and required modules
+    - name: Install PHP and required modules
+      apt:
+        name:
+          - php
+          - php-mysql
+        state: present
+
+    # Task 7: Deploy Sample PHP Application
+    - name: Create PHP file
+      copy:
+        dest: /var/www/html/index.php
+        content: |
+          <?php
+          $conn = new mysqli("localhost", "root", "rootpassword");
+          if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+          }
+          echo "Connected successfully. Welcome to Ansible-LAMP!";
+          ?>
+
